@@ -41,7 +41,140 @@ const ArchiveExtractors = (() => {
   }
 
   function instagramSelectors() {
-    return ["article", "div._aagw", "div.x1lliihq"];
+    return ["article", "main section", "main"];
+  }
+
+  function instagramPostIdFromUrl(url = "") {
+    const match = String(url).match(/instagram\.com\/(?:p|reel|tv)\/([^/?#]+)/i);
+    return match ? match[1] : "";
+  }
+
+  function instagramPostUrl(element, pageUrl) {
+    const pageMatch = pageUrl.match(/instagram\.com\/(?:p|reel|tv)\/([^/?#]+)/i);
+    if (pageMatch) {
+      const kind = pageUrl.includes("/reel/") ? "reel" : pageUrl.includes("/tv/") ? "tv" : "p";
+      return `https://www.instagram.com/${kind}/${pageMatch[1]}/`;
+    }
+
+    const prioritySelectors = [
+      'a[href*="/p/"]',
+      'a[href*="/reel/"]',
+      'a[href*="/tv/"]',
+      'time[datetime]',
+    ];
+
+    for (const selector of prioritySelectors) {
+      const link = element.querySelector(selector);
+      const href = link?.href || link?.closest?.("a[href]")?.href || "";
+      const id = instagramPostIdFromUrl(href);
+      if (id) {
+        const kind = href.includes("/reel/") ? "reel" : href.includes("/tv/") ? "tv" : "p";
+        return `https://www.instagram.com/${kind}/${id}/`;
+      }
+    }
+
+    return "";
+  }
+
+  function instagramAuthor(element) {
+    const headerName = firstText(element, [
+      "header a span[dir='auto']",
+      "header a[href*='/']",
+      "a[href*='/'][role='link'] span[dir='auto']",
+    ]);
+    if (headerName) return headerName.split("\n")[0].trim();
+
+    const img = element.querySelector("img[alt]");
+    const alt = img?.getAttribute("alt") || "";
+    const photoBy = alt.match(/Photo by (.+?) on/i) || alt.match(/(.+?) on Instagram/i);
+    if (photoBy) return photoBy[1].trim();
+
+    const profileLink = element.querySelector('a[href^="/"][href*="/"]');
+    const href = profileLink?.getAttribute("href") || "";
+    const handle = href.match(/^\/([^/?#]+)\/?$/);
+    if (handle && !["p", "reel", "tv", "explore", "accounts", "direct"].includes(handle[1])) {
+      return handle[1];
+    }
+
+    return "";
+  }
+
+  function instagramBodyText(element) {
+    const fromHeading = firstText(element, ["h1", "h2", '[role="dialog"] h1']);
+    if (fromHeading.length >= 5) return fromHeading.slice(0, 1200);
+
+    let best = "";
+    element.querySelectorAll("span[dir='auto'], div[dir='auto'], li[dir='auto']").forEach((node) => {
+      const text = cleanText(node.innerText || node.textContent);
+      if (text.length > best.length && text.length >= 5) best = text;
+    });
+
+    if (best.length >= 5) return best.slice(0, 1200);
+
+    const img = element.querySelector("img[alt]");
+    const alt = img?.getAttribute("alt") || "";
+    const altCaption = alt.match(/Photo by .+? on .+?:\s*(.+)$/i);
+    if (altCaption) return cleanText(altCaption[1]).slice(0, 1200);
+
+    const clone = element.cloneNode(true);
+    clone
+      .querySelectorAll("button, svg, nav, header img, video, [aria-hidden='true']")
+      .forEach((node) => node.remove());
+    return cleanText(clone.innerText).slice(0, 1200);
+  }
+
+  function isInstagramPost(element) {
+    if (!element || !(element instanceof HTMLElement)) return false;
+    if (element.closest("nav, footer, aside, [role='dialog']")) return false;
+    if (element.offsetHeight < 80 || element.offsetWidth < 200) return false;
+
+    const hasPostLink =
+      Boolean(instagramPostUrl(element, location.href)) ||
+      Boolean(element.querySelector('a[href*="/p/"], a[href*="/reel/"], a[href*="/tv/"]'));
+
+    if (!hasPostLink && !location.pathname.match(/^\/(p|reel|tv)\//)) return false;
+
+    const content = instagramBodyText(element);
+    const author = instagramAuthor(element);
+    return content.length >= 5 || (author.length >= 2 && content.length >= 1);
+  }
+
+  function instagramCanonicalContainer(element) {
+    if (!element) return null;
+
+    const selectors = ["article", "main section", "main"].join(", ");
+    let node = element.closest(selectors) || element;
+
+    let outermost = node;
+    while (node) {
+      if (isInstagramPost(node)) outermost = node;
+      const parent = node.parentElement?.closest(selectors);
+      node = parent && parent !== node ? parent : null;
+    }
+
+    return isInstagramPost(outermost) ? outermost : null;
+  }
+
+  function findInstagramCandidates() {
+    const nodes = new Set();
+
+    document.querySelectorAll("main article, article").forEach((node) => {
+      const container = instagramCanonicalContainer(node);
+      if (container) nodes.add(container);
+    });
+
+    if (location.pathname.match(/^\/(p|reel|tv)\//)) {
+      const pageRoot = document.querySelector("main") || document.querySelector("article");
+      const container = instagramCanonicalContainer(pageRoot);
+      if (container) nodes.add(container);
+    }
+
+    document.querySelectorAll('a[href*="/p/"], a[href*="/reel/"], a[href*="/tv/"]').forEach((link) => {
+      const container = instagramCanonicalContainer(link);
+      if (container) nodes.add(container);
+    });
+
+    return dedupeOuterContainers(nodes);
   }
 
   function tiktokSelectors() {
@@ -284,6 +417,10 @@ const ArchiveExtractors = (() => {
       return isLinkedInFeedPost(element);
     }
 
+    if (platform === "instagram") {
+      return isInstagramPost(element);
+    }
+
     if (!matchesContainer(element, platform)) return false;
     const text = cleanText(element.innerText);
     return text.length >= 20;
@@ -414,6 +551,10 @@ const ArchiveExtractors = (() => {
       return dedupeOuterContainers(nodes);
     }
 
+    if (platform === "instagram") {
+      return findInstagramCandidates();
+    }
+
     const selectors = selectorsFor(platform);
     selectors.forEach((selector) => {
       try {
@@ -449,23 +590,21 @@ const ArchiveExtractors = (() => {
   }
 
   function extractInstagram(element, pageUrl) {
-    const content =
-      firstText(element, ["h1", "span._ap3a", "div._a9zs span", "ul li span"]) ||
-      cleanText(element.innerText).slice(0, 1200);
-
-    const author = firstText(element, ["header a", "a[role='link']", "span._ap3a"]);
-    const link = element.querySelector("a[href*='/p/'], a[href*='/reel/']");
-    let url = link?.href ? link.href.split("?")[0] : pageUrl.split("?")[0];
+    const content = instagramBodyText(element);
+    const author = instagramAuthor(element);
+    let url = instagramPostUrl(element, pageUrl);
+    const postId = instagramPostIdFromUrl(url || pageUrl);
     if (typeof ArchiveUrls !== "undefined") {
-      url = ArchiveUrls.normalize("instagram", url);
+      url = ArchiveUrls.normalize("instagram", url || pageUrl, postId);
     }
 
     return {
       platform: "instagram",
-      title: author ? `Instagram post by ${author}` : "Instagram post",
+      title: author ? `Instagram · ${author}` : "Instagram post",
       content,
       url,
       author,
+      postId,
     };
   }
 
@@ -536,6 +675,7 @@ const ArchiveExtractors = (() => {
     detectPlatform,
     resolvePostContainer,
     linkedInCanonicalContainer,
+    instagramCanonicalContainer,
     isCandidate,
     findCandidates,
     extract,

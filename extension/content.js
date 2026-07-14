@@ -6,7 +6,7 @@
   if (!PLATFORM) return;
 
   const DWELL_MS = 2000;
-  const MIN_CONTENT_LENGTH = 20;
+  const MIN_CONTENT_LENGTH = PLATFORM === "instagram" ? 5 : 20;
   const VISIBLE_RATIO = 0.25;
   const observed = new WeakSet();
   const timers = new WeakMap();
@@ -23,12 +23,21 @@
     if (PLATFORM === "linkedin" && ArchiveExtractors.linkedInCanonicalContainer) {
       return ArchiveExtractors.linkedInCanonicalContainer(element);
     }
+    if (PLATFORM === "instagram" && ArchiveExtractors.instagramCanonicalContainer) {
+      return ArchiveExtractors.instagramCanonicalContainer(element);
+    }
     return ArchiveExtractors.resolvePostContainer(element, PLATFORM) || element;
   }
 
   function badgeHostFor(element) {
     const host = canonicalElement(element);
     if (!host || !(host instanceof HTMLElement)) return null;
+
+    if (PLATFORM === "instagram") {
+      const article = host.matches?.("article") ? host : host.closest?.("article");
+      if (article && article.offsetHeight >= 80) return article;
+      return host.offsetHeight >= 80 ? host : null;
+    }
 
     const wrapper =
       host.matches?.('[data-view-name="feed-full-update"]') ?

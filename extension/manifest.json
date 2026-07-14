@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Archive — Personal Browsing Memory",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Passively saves posts you read on LinkedIn, Instagram, TikTok, and Google. Search them later — no setup required.",
   "permissions": ["tabs", "scripting"],
   "host_permissions": [
