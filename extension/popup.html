@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archive</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="container">
+      <header class="header">
+        <div class="brand">
+          <span class="brand-mark">A</span>
+          <div>
+            <h1>Archive</h1>
+            <p class="subtitle">Your private browsing memory · works offline</p>
+          </div>
+        </div>
+        <span id="itemCount" class="item-count">—</span>
+      </header>
+
+      <div class="search-row">
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="LinkedIn post about AI agents…"
+          autocomplete="off"
+          spellcheck="false"
+          autofocus
+        />
+        <button id="searchBtn" type="button" aria-label="Search">Search</button>
+      </div>
+
+      <p class="hint">Tip: include platform names for sharper results — “TikTok coffee video”</p>
+
+      <div class="toolbar">
+        <button id="captureBtn" type="button" class="ghost">Capture visible</button>
+        <button id="testBtn" type="button" class="ghost subtle">Status</button>
+      </div>
+
+      <p id="statusText" class="status">Connecting…</p>
+      <div id="results" class="results" aria-live="polite"></div>
+    </main>
+    <script src="urls.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
