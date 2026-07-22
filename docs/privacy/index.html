@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy — Archive</title>
+    <meta name="description" content="Archive privacy policy — local-first browsing memory." />
+    <link rel="icon" href="../assets/logo.png" />
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <a class="brand" href="../">
+          <img src="../assets/logo.png" alt="Archive logo" width="40" height="40" />
+          <div>
+            <strong>Archive</strong>
+            <span>Personal browsing memory</span>
+          </div>
+        </a>
+        <nav class="nav" aria-label="Primary">
+          <a href="../">Home</a>
+          <a href="../email/">Updates</a>
+        </nav>
+      </header>
+
+      <article class="card privacy-content">
+        <p class="eyebrow">Legal</p>
+        <h1>Privacy Policy</h1>
+        <p><strong>Last updated:</strong> July 2026</p>
+        <p>
+          Archive is a local-first browsing memory tool. Your data stays on your machine unless you
+          choose to run an optional self-hosted backend.
+        </p>
+
+        <h2>What we collect</h2>
+        <p>Archive saves text you explicitly view on supported websites, including:</p>
+        <ul>
+          <li>Post or result text</li>
+          <li>Author name (when visible on the page)</li>
+          <li>Permalink URL (when available)</li>
+          <li>Platform name and capture timestamp</li>
+        </ul>
+
+        <h2>Where data is stored</h2>
+        <ul>
+          <li>
+            <strong>Browser extension (default):</strong> all memories stored in IndexedDB on your
+            device. No server required.
+          </li>
+          <li>
+            <strong>Optional local backend:</strong> if you run the Python server, saves are mirrored
+            to your local PostgreSQL database.
+          </li>
+          <li><strong>No cloud storage</strong> is used by default.</li>
+        </ul>
+
+        <h2>What we do not collect</h2>
+        <ul>
+          <li>Passwords or credentials</li>
+          <li>Private messages</li>
+          <li>Payment information</li>
+          <li>Browsing history outside supported platforms</li>
+          <li>Data from sites not listed in the extension permissions</li>
+        </ul>
+
+        <h2>Update emails</h2>
+        <p>
+          If you subscribe on our website, we store your name and email only to send product updates.
+          You can unsubscribe anytime. We do not use that list for ads.
+        </p>
+
+        <h2>Third parties</h2>
+        <p>Archive does not sell or share your browsing memories. The extension communicates only with:</p>
+        <ol>
+          <li>Supported content pages (read-only DOM extraction on sites you visit)</li>
+          <li>Your browser's local IndexedDB storage (default — no network)</li>
+          <li>Your optional local Archive backend (<code>http://127.0.0.1:8000</code>) — only if you run it</li>
+          <li>OpenAI (optional, only if you enable it in a self-hosted backend)</li>
+        </ol>
+
+        <h2>Data control</h2>
+        <ul>
+          <li>
+            <strong>Extension-only (default):</strong> uninstall Archive, or clear extension/site
+            data in Chrome settings.
+          </li>
+          <li><strong>Optional backend:</strong> delete the PostgreSQL <code>archive</code> database.</li>
+          <li>Uninstall the extension to stop new captures.</li>
+        </ul>
+
+        <h2>Contact</h2>
+        <p>
+          For privacy questions:
+          <a href="mailto:archivememory.support@gmail.com">archivememory.support@gmail.com</a>
+        </p>
+        <p>
+          Or open an issue on
+          <a href="https://github.com/archivememorysupport/archive" target="_blank" rel="noopener noreferrer"
+            >GitHub</a
+          >.
+        </p>
+      </article>
+
+      <footer class="footer">
+        <span>© Archive Memory</span>
+        <span><a href="../">Back home</a></span>
+      </footer>
+    </div>
+  </body>
+</html>

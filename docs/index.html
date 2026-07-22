@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archive — Personal Browsing Memory</title>
+    <meta
+      name="description"
+      content="Save posts you read on LinkedIn, Instagram, TikTok and Google. Search your private local memory later."
+    />
+    <link rel="icon" href="assets/logo.png" />
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <a class="brand" href="./">
+          <img src="assets/logo.png" alt="Archive logo" width="40" height="40" />
+          <div>
+            <strong>Archive</strong>
+            <span>Personal browsing memory</span>
+          </div>
+        </a>
+        <nav class="nav" aria-label="Primary">
+          <a href="#how">How it works</a>
+          <a href="email/">Updates</a>
+          <a href="privacy/">Privacy</a>
+        </nav>
+      </header>
+
+      <section class="hero">
+        <div class="hero-copy">
+          <h1>Remember what you read online.</h1>
+          <p class="lede">
+            Archive quietly saves posts you spend time on — then lets you search them later. Private,
+            local, no account required.
+          </p>
+          <div class="actions">
+            <a class="btn" data-chrome-store href="#install">Add to Chrome</a>
+            <a class="btn secondary" href="email/">Get update emails</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Works on</h2>
+          <p>LinkedIn · Instagram · TikTok · Google Search</p>
+          <div class="privacy-box">
+            <p class="label">Privacy</p>
+            <ul>
+              <li>Memories stay on your device (IndexedDB).</li>
+              <li>No cloud account. No ads. No data sold.</li>
+              <li>Optional local backend for power users only.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid-3" id="how">
+        <article class="card">
+          <h3>1 · Browse</h3>
+          <p>Use LinkedIn, Instagram, TikTok, or Google like normal.</p>
+        </article>
+        <article class="card">
+          <h3>2 · Pause</h3>
+          <p>Stay on a post for 2 seconds, or tap <strong>Capture visible</strong> in the popup.</p>
+        </article>
+        <article class="card">
+          <h3>3 · Search</h3>
+          <p>Open Archive and search by keyword, author, or platform anytime.</p>
+        </article>
+      </section>
+
+      <section class="card" id="install">
+        <h2>Install Archive</h2>
+        <p id="install-copy">
+          Chrome Web Store link goes here once the extension is approved. Until then, testers can load
+          the extension unpacked from GitHub.
+        </p>
+        <div class="actions" style="margin-top: 18px">
+          <a class="btn" data-chrome-store href="#install">Add to Chrome</a>
+          <a
+            class="btn secondary"
+            href="https://github.com/archivememorysupport/archive"
+            target="_blank"
+            rel="noopener noreferrer"
+            >View on GitHub</a
+          >
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span>© Archive Memory</span>
+        <span>
+          <a href="mailto:archivememory.support@gmail.com">Support</a>
+          ·
+          <a href="privacy/">Privacy</a>
+          ·
+          <a href="email/">Updates</a>
+        </span>
+      </footer>
+    </div>
+
+    <script src="assets/site.js"></script>
+    <script>
+      (function () {
+        const cfg = window.ARCHIVE_SITE;
+        const copy = document.getElementById("install-copy");
+        if (cfg.chromeStoreUrl && copy) {
+          copy.textContent =
+            "Install Archive from the Chrome Web Store in one click. All memories stay local on your device.";
+        }
+      })();
+    </script>
+  </body>
+</html>

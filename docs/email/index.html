@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Updates — Archive</title>
+    <meta name="description" content="Get Archive extension updates by email." />
+    <link rel="icon" href="../assets/logo.png" />
+    <link rel="stylesheet" href="../assets/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <a class="brand" href="../">
+          <img src="../assets/logo.png" alt="Archive logo" width="40" height="40" />
+          <div>
+            <strong>Archive</strong>
+            <span>Personal browsing memory</span>
+          </div>
+        </a>
+        <nav class="nav" aria-label="Primary">
+          <a href="../">Home</a>
+          <a href="../privacy/">Privacy</a>
+        </nav>
+      </header>
+
+      <main class="panel">
+        <p class="eyebrow">Updates · 1 step</p>
+        <h1>Stay in the loop.</h1>
+        <p>
+          New platforms, capture fixes, and Chrome Web Store releases. One short email when something
+          ships — no spam.
+        </p>
+
+        <div class="privacy-box">
+          <p class="label">Privacy</p>
+          <ul>
+            <li>Your email is only used for Archive product updates.</li>
+            <li>We do not sell your address or share it with advertisers.</li>
+            <li>Unsubscribe anytime from any email we send.</li>
+          </ul>
+        </div>
+
+        <form id="updates-form" class="form-stack" action="#" method="post">
+          <label id="name-field">
+            Name
+            <input type="text" name="name" autocomplete="name" placeholder="Your name" />
+          </label>
+          <label>
+            Email
+            <input type="email" name="email" autocomplete="email" placeholder="you@example.com" required />
+          </label>
+          <button class="btn" type="submit">Subscribe</button>
+        </form>
+
+        <p class="note" id="setup-note">
+          Configure <code>buttondownUsername</code> in <code>docs/assets/site.js</code> to activate
+          this form. See <code>WEBSITE.md</code> in the repo.
+        </p>
+
+        <p class="success" id="success-msg">Thanks — you're on the list.</p>
+
+        <div class="actions" style="margin-top: 28px">
+          <a class="btn secondary" data-chrome-store href="../#install">Add to Chrome</a>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <span>© Archive Memory</span>
+        <span>
+          <a href="mailto:archivememory.support@gmail.com">archivememory.support@gmail.com</a>
+        </span>
+      </footer>
+    </div>
+
+    <script src="../assets/site.js"></script>
+    <script>
+      (function () {
+        const cfg = window.ARCHIVE_SITE;
+        const form = document.getElementById("updates-form");
+        const note = document.getElementById("setup-note");
+
+        if (cfg.buttondownUsername) {
+          form.action = `https://buttondown.com/api/emails/embed/subscribe/${cfg.buttondownUsername}`;
+          form.method = "post";
+          form.target = "_blank";
+          const nameField = document.getElementById("name-field");
+          if (nameField) nameField.style.display = "none";
+          note.textContent =
+            "Subscribing adds you to Archive release notes only. Unsubscribe anytime.";
+          form.addEventListener("submit", function () {
+            document.getElementById("success-msg").classList.add("is-visible");
+          });
+          return;
+        }
+
+        if (cfg.formspreeId) {
+          form.action = `https://formspree.io/f/${cfg.formspreeId}`;
+          form.method = "POST";
+          const nameInput = form.querySelector('input[name="name"]');
+          if (nameInput) nameInput.required = true;
+          note.textContent = "We'll only email you about Archive updates.";
+          form.addEventListener("submit", function () {
+            document.getElementById("success-msg").classList.add("is-visible");
+          });
+          return;
+        }
+
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          note.textContent =
+            "Email signup is not configured yet. Edit docs/assets/site.js or email archivememory.support@gmail.com to join manually.";
+        });
+      })();
+    </script>
+  </body>
+</html>
